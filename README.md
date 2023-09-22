@@ -144,3 +144,41 @@ gp env HELLO='world'
 All future workstations launched will set the env vars for all bash terminals opened in those workspaces.
 
 You can also set env vars in the `gitpod.yml` file, however, this can only contain non-sensitive env vars
+
+
+## **AWS CLI Installation**
+
+AWS CLI is installed for this project via the bash script [./bin/install_aws_cli](./bin/install_aws_cli)
+
+[Getting Started Install (AWS CLI)](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+
+- This project is Ubuntu - x86
+- We use the Linux - x86 installation instructions. 
+- Please verify your OS and make changes necesary if you are on another OS
+
+[AWS CLI Env Vars](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html)
+
+We can check if our AWS credentials are configured correctly by running the following CLI command
+
+eg:
+```sh
+$ aws sts get-caller-identity
+```
+If it is succesful you should see a json payload return that looks like this:
+
+```json
+{
+    "UserId": "UserID",
+    "Account": "AccountNumber",
+    "Arn": "arn:aws:iam::account:user/username"
+}
+```
+Will need to generate AWS CLI credentials from IAM user in order to use the AWS CLI. 
+
+We should use a unique user so we can limit permissions for this user in the future
+
+Highly reccomend setting up MFA for you AWS environment. 
+
+**Never publish your credentials in a file that will get pushed to github**
+
+We used a gitpod secret env var for our AWS credentials so they will persist through workspaces and terminals, as well as keeping them in a secure storage.
