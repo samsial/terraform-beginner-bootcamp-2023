@@ -248,6 +248,31 @@ If this file is lost, you lose the knowledge about the state of your infrstructu
 
 `1terraform.tfstate.backup` is ther previous version of your state file
 
+### **Terraform init -upgrade** - `terraform init -upgrade`
+
+If you have ran `terraform init` and later add a new required provider. The terraform plan will likely display an error saying there is an inco0sistency in the lock file. This can be addressed by running `terraform init -upgrade` or also by re-running `terraform init`.
+
+Error Example:
+```sh
+│ Error: Inconsistent dependency lock file
+│ 
+│ The following dependency selections recorded in the lock file are inconsistent with the current configuration:
+│   - provider registry.terraform.io/hashicorp/aws: required by this configuration but no version is selected
+│ 
+│ To update the locked dependency selections to match a changed configuration, run:
+│   terraform init -upgrade
+```
+
+### **Terraform Validate** - `terraform validate`
+
+This will validate your terraform syntax to ensure there are no errors
+
+### **Terraform Destroy** - `terraform destroy`
+
+This will tear down (destroy) resources that were created by the `terraform apply` command. 
+
+`terraform destroy --auto-approve` is valid to skip the confirmation prompt
+
 #### Examples used for this project - Week 0
 
 [Terraform Random Provider](https://registry.terraform.io/providers/hashicorp/random/latest/docs)
@@ -299,3 +324,15 @@ output "random_bucket_result" {
     value = random_string.bucket_name.result
 }
 ```
+
+## **AWS S3 Basics**
+
+### **AWS S3 Bucket**
+
+#### **Week 0 Random named S3 Bucket**
+
+[Bucket naming rules](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html?icmpid=docs_amazons3_console)
+
+This comes into play with our random provider, given that by default the provider will use uppercase and some special characters that are invalid per AWS naming rules. On our initial apply to create the S3 bucket, the name was invalid causing an issue. 
+
+We had to alter the resource to specify lowercase and to only use `.` or `-` special characters in the name per the AWS S3 bucket naming rules. We also increased the size to 32 characters.
