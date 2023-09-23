@@ -273,6 +273,23 @@ This will tear down (destroy) resources that were created by the `terraform appl
 
 `terraform destroy --auto-approve` is valid to skip the confirmation prompt
 
+### **Terraform cloud**
+
+[Migrate State file from local to cloud](https://developer.hashicorp.com/terraform/tutorials/cloud/cloud-migrate)
+
+```terraform
+terraform {
+  cloud {
+    organization = "org"
+
+    workspaces {
+      name = "workspace_name"
+    }
+  }
+}
+
+```
+
 #### Examples used for this project - Week 0
 
 [Terraform Random Provider](https://registry.terraform.io/providers/hashicorp/random/latest/docs)
@@ -336,3 +353,26 @@ output "random_bucket_result" {
 This comes into play with our random provider, given that by default the provider will use uppercase and some special characters that are invalid per AWS naming rules. On our initial apply to create the S3 bucket, the name was invalid causing an issue. 
 
 We had to alter the resource to specify lowercase and to only use `.` or `-` special characters in the name per the AWS S3 bucket naming rules. We also increased the size to 32 characters.
+
+
+## **Issues with Terraform Cloud Login and Gitpod workspace**
+
+When trying to login to Terraform Cloud from gitpod, it will tyr to launch in gitpod bash terminal. You can CTRL+click the URL and generate a new token. Copy the token and hit `q` to exit the Terraform Cloud Wizard and right click to paste your token. 
+
+If this doesnt work you can generate the authentication file yourself
+
+```bash
+touch /home/gitpod/.terraform.d/credentials.tfrc.json
+open /home/gitpod/.terraform.d/credentials.tfrc.json
+```
+
+Place the following JSON in the opened file 
+```json
+{
+  "credentials": {
+    "app.terraform.io": {
+      "token": "your-terraform-cloud-token"
+    }
+  }
+}
+```
