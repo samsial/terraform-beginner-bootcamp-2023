@@ -376,3 +376,13 @@ Place the following JSON in the opened file
   }
 }
 ```
+
+We gave automated generating this token file using a bash script [.bin/generate_tfrc_credentials](./bin/generate_tfrc_credentials)
+
+We also added a block to the gitpod.yml file to ensure this script is run **BEFORE** each gitpod workspace is established
+
+```yml
+    before: |
+      source ./bin/install_terraform_cli
+      source ./bin/generate_tfrc_credentials
+```
