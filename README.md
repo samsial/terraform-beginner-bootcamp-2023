@@ -43,9 +43,9 @@ PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-poli
 UBUNTU_CODENAME=jammy
 ```
 
-### **Refactoring int Bash Scripts**
+### **Refactoring Terraform CLI Bash Script**
 
-While ficing the Terraform CLI gpg deprecation issues noticed the bash scripts were considerably larger than the previous instructions. Decided to create a bash script to install the terraform CLI.
+While fixing the Terraform CLI gpg deprecation issues noticed the bash scripts were considerably larger than the previous instructions. Decided to create a bash script to install the terraform CLI.
 
 This bash script is located in: [./bin/install_terraform_cli](./bin/install_terraform_cli)
 
@@ -182,3 +182,120 @@ Highly reccomend setting up MFA for you AWS environment.
 **Never publish your credentials in a file that will get pushed to github**
 
 We used a gitpod secret env var for our AWS credentials so they will persist through workspaces and terminals, as well as keeping them in a secure storage.
+
+## **Terraform Basics** 
+
+### **Terraform Registry**
+
+Terraform sources their providers and modules from the Terraform registry which is located at [registry.terrafor.io](https://registry.terraform.io/)
+
+- Terraform Providers are interfaces to APIs that will allow the creation of resources in Terraform
+- Terraform Modules are a way to make large amounts of Terraform modular, portable, and shareable
+    - We write modules often in Terraform
+
+### **Terraform Console**
+
+We can see a list of all the Terraform commands by typing `terraform` in the terminal
+
+
+### **Terraform INIT** | `terraform init`
+
+At the start of a new Terraform project we run `terraform init` to download the binaries for the Terraform providers that the project will use,
+
+When running Terraform INIT we get the message:
+
+"Terraform has created a lock file .terraform.lock.hcl to record the provider
+selections it made above. Include this file in your version control repository
+so that Terraform can guarantee to make the same selections by default when
+you run "terraform init" in the future."
+
+
+Terraform init creates:
+
+  - `.terraform` directory which contains our provider binaries
+  - terraform.lock.hcl file
+    - `terraform.lock.hcl` contains the locked versioning for the providers or modules that should be used with this project
+    - This file **SHOULD** be included in your version controle commits
+
+### **Terraform PLAN** `terrraform apply`
+
+This will generate a changeset about the state of our infrastructure and what will be changed.
+
+Terraform plan creates the plan of what we are going to add, delete, modify. This works off previous state files to generate the plan based on what exists and what is defined in the terraform file.
+
+Use `terraform plan -out` to save your plan to a file to gurantee that the displayed actions will be performed. This file can then be used in an `terraform apply` later. However, often outputting is ignored.
+
+### **Terraform APPLY** - `terraform apply`
+
+This will run a plan and pass the changeset to be executed by Terraform. Apply should prompt us to proceed. `Yes` is the only valid option to proceed, anything else will terminate the apply.
+
+If you would like to automatically approve an apply, provide the auto approve flag to your apply command
+
+eg: 
+```terraform
+terraform apply --auto-approve
+```
+
+### **Terraform State Files**
+
+`terraform.tfstate` contains the information about the current state of your infrastructure.
+
+This file **SHOULD NOT** be included in your version control commits
+
+This file can containe sensitivie data. 
+
+If this file is lost, you lose the knowledge about the state of your infrstructure.
+
+`1terraform.tfstate.backup` is ther previous version of your state file
+
+#### Examples used for this project - Week 0
+
+[Terraform Random Provider](https://registry.terraform.io/providers/hashicorp/random/latest/docs)
+
+This is a random provider created for pre-week (week0) so that we have soemthing to validate the initial week against for the bootcamp
+
+This is an example of how to use a provider in your terraform file
+
+eg:
+```terraform
+terraform {
+  required_providers {
+    random = {
+      source = "hashicorp/random"
+      version = "3.5.1"
+    }
+  }
+}
+
+provider "random" {
+  # Configuration options
+}
+```
+
+[Random String Documentation](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string)
+
+This is an example of defining a resource 
+
+eg:
+```terraform
+resource "random_string" "bucket_name" {
+  length           = 16
+  special          = true
+  override_special = "/@£$"
+}
+```
+
+[Terraform Outputs Documentation](https://developer.hashicorp.com/terraform/language/values/outputs)
+
+This is an example of setting an output in the terraform file
+
+eg:
+```terraform
+output "random_bucket_id" {
+    value = random_string.bucket_name.id
+}
+
+output "random_bucket_result" {
+    value = random_string.bucket_name.result
+}
+```
