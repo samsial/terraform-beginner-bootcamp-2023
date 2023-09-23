@@ -386,3 +386,9 @@ We also added a block to the gitpod.yml file to ensure this script is run **BEFO
       source ./bin/install_terraform_cli
       source ./bin/generate_tfrc_credentials
 ```
+
+## **Terraform Alias**
+
+[Bash dotfiles](https://effective-shell.com/part-5-building-your-toolkit/managing-your-dotfiles/) - More information on bash dotfiles and how they can be used
+
+Added bash script to [./bin/set_tf_alias](./bin/set_tf_alias) that will automatically set `alias tf="terraform"` in our ~/.bash_profile file each time our workspace is started.
