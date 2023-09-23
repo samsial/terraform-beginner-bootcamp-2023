@@ -1,4 +1,11 @@
 terraform {
+  cloud {
+    organization = "andrewpaul13"
+
+    workspaces {
+      name = "terra-house-1"
+    }
+  }
   required_providers {
     random = {
       source = "hashicorp/random"
@@ -22,7 +29,7 @@ provider "random" {
 #https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html?icmpid=docs_amazons3_console
 resource "random_string" "bucket_name" {
   length           = 32
-  special          = true
+  special          = false
   override_special = ".-"
   lower = true
   upper = false
