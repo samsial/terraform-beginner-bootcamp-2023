@@ -1,21 +1,21 @@
 # Terraform Beginner Bootcamp 2023 - Week 1
 
-## Fixing Tags
+## How to Fix a Tag
 
-[How to Delete Local and Remote Tags on Git](https://devconnected.com/how-to-delete-local-and-remote-tags-on-git/)
+[Github Deleting Tags](https://devconnected.com/how-to-delete-local-and-remote-tags-on-git/)
 
-Locall delete a tag
+Delete Tag Locally
 ```sh
 git tag -d <tag_name>
 ```
 
-Remotely delete tag
+Delete Tag Remotely
 
 ```sh
 git push --delete origin tagname
 ```
 
-Checkout the commit that you want to retag. Grab the sha from your Github history.
+Checkout the commit you want to add the tag to. You will need the SHA for that commit which can be found in the github repo
 
 ```sh
 git checkout <SHA>
