@@ -169,3 +169,47 @@ output "bucket_name" {
 [Terraform Refresh Command](https://developer.hashicorp.com/terraform/cli/commands/refresh)
 
 This is drepcated but there is a new way to refresh with `terraform apply -refresh-only -auto-approve`
+
+## Considerations when using ChatGPT to write Terraform
+
+LLMs, such as ChatGPT, may not be trained on the latest information or documentation about Terraform.
+
+It may produce innacurate examples that are deprecated and no longer accurate. This can affect an example used from ChatGPT causing errors when used since the version on Terraform is further along that what ChatGPT knows about.
+
+## Working with Files in Terraform
+
+[Special Path Varaible](https://developer.hashicorp.com/terraform/language/expressions/references#filesystem-and-workspace-info)
+
+In terraform there is a special variaable called `path` that allows us to reference local paths:
+- path.module -- get the path for the current module
+- path.root -- get the path for the root module
+
+## Static Website Hosting
+
+### AWS Static Website Hosting Resource
+
+[AWS S3 Website Configuration Resource](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_website_configuration)
+
+### AWS S3 Object
+
+[AWS S3 Object Resource](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_object)
+
+### Terraform etags
+
+Terrraform by default does not look at the data in a static file. It only looks at if the resource has changed or the location, etc. 
+
+To add content changes to the resource checking within terraform we use eTAGs. In this example, we use the MD5 Terraform function to create a hash of the `index.html` file. The bleow example will create and MD5 hash of our index.html file which will change anytime we change the content in the file. This will cause Terraform to see a change and the re-upload the file to the S3 bucket with the new static HTML included.
+
+ed:
+
+```tf
+etag = filemd5(var.index_html_filepath)
+```
+
+[md5 Function](https://developer.hashicorp.com/terraform/language/functions/md5)
+
+### Terraform Functions
+
+There are a plethora of functions that we can use.
+
+[Terraform Functions](https://developer.hashicorp.com/terraform/language/functions)
