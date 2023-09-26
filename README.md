@@ -72,12 +72,6 @@ I wanted to execute my terraform actions on the GitPod machine but also wanted t
     - `terraform apply`
     - `terraform destroy` (optional)
 
-4. Back in Terraform Cloud you will notice that there are no resources for your workspace
-
-    ![terraform-cloud-resources-updated](./journal/screenshots/tf-cloud-resources-updated.jpg)
-
-5. But we will have a newly created state file that is present and accurate
+4. We now have a state and resources tracked in Terraform Cloud but it was all executed from the Terraform install in the local GitPod workspace.
 
     ![terraform-states](./journal/screenshots/tf-cloud-states.jpg)
-
-    
