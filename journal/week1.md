@@ -79,3 +79,93 @@ When using terraform cloud the variable will need to be created in the web porta
 I couldnt see the entire regext string in the course work this week. I tried to duplicate it from past experience and by determining the format of a UUID. I forgot to add the string to test against and was getting a failure that said the var.user_uuid variable needed to be added. Regexg in TF is very close to the regext function in RHEL but during troubleshooting I confirmed with the below link.
 
 [Terraform Regex Function](https://developer.hashicorp.com/terraform/language/functions/regex)
+
+## Terraform Modules
+
+[Terraform Modules Overview](https://developer.hashicorp.com/terraform/tutorials/modules/module)
+
+### Terraform Module Structure
+
+It is reccomended to place modules in a `modules` directory when locally developing modules. This file can be named anything but modules makes the most sense here for clarity. There is a standard module structure
+
+[Terraform Module Structure](https://developer.hashicorp.com/terraform/language/modules/develop/structure)
+
+eg minimal module:
+
+```
+tree minimal-module/
+.
+├── README.md
+├── main.tf
+├── variables.tf
+├── outputs.tf
+```
+
+eg nested module:
+
+```
+tree complete-module/
+.
+├── README.md
+├── main.tf
+├── variables.tf
+├── outputs.tf
+├── ...
+├── modules/
+│   ├── nestedA/
+│   │   ├── README.md
+│   │   ├── variables.tf
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   ├── nestedB/
+│   ├── .../
+├── examples/
+│   ├── exampleA/
+│   │   ├── main.tf
+│   ├── exampleB/
+│   ├── .../
+```
+
+### Passing Input Variables
+
+We cann pass input variables to a module through the root `main.tf`
+
+```tf
+module "terrahouse_aws" {
+  user_uuid = var.user_uuid
+  bucket_name = var.bucket_name
+}
+```
+
+[Terraform Module Sources](https://developer.hashicorp.com/terraform/language/modules/sources)
+
+There are several ways to source modules into the root `main.tf`. Relative path, absolute path, Terraform Registry, github direct path, etc.
+
+eg (relative path):
+
+```tf
+module "terrahouse_aws" {
+  source = "./modules/terrahouse_aws"
+}
+```
+
+
+### Terraform Outputs with Nested Modules
+
+Condsideration should be taken when using outputs with nested modules. The outputs are only visible within the module itself. If we want to have the outputs available at the root, we need to make reference in the root '`outputs.tf` to the output in the module.
+
+eg:
+
+```tf
+output "bucket_name" {
+    description = "Bucket name for our static website"
+    value = module.terrahouse_aws.bucket_name                #notice here it calls the module as opposed to the resource
+}
+```
+
+
+### Terraform Refresh
+
+[Terraform Refresh Command](https://developer.hashicorp.com/terraform/cli/commands/refresh)
+
+This is drepcated but there is a new way to refresh with `terraform apply -refresh-only -auto-approve`
