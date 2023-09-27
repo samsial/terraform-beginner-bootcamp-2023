@@ -238,3 +238,123 @@ etag = filemd5(var.index_html_filepath)
 There are a plethora of functions that we can use.
 
 [Terraform Functions](https://developer.hashicorp.com/terraform/language/functions)
+
+
+## CDN Implementation
+
+### Cloudfront Disribution 
+
+[CloudFront Distribution Documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_distribution)
+
+Cloudfront is AWS version of a Content Delivery Network ([CDN](https://en.wikipedia.org/wiki/Content_delivery_network)). We uses Cloudfront distributions to tell Cloudfront where we want our content delivered to users from.
+
+[More Details on Cloudfront Distribution](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-overview.html)
+
+### Origin Access Control
+
+Origin Access Control is the new more feature rich way to provide access to an AWS S3 bucket. Origin Access Identity was the previous way and is much more tedious to implement. There were also certain situations where OAI was not supported.
+
+>CloudFront provides two ways to send authenticated requests to an Amazon S3 origin: origin access control (OAC) and origin access identity (OAI). We recommend using OAC because it supports:
+>
+>All Amazon S3 buckets in all AWS Regions, including opt-in Regions launched after December 2022
+>
+>Amazon S3 server-side encryption with AWS KMS (SSE-KMS)
+>
+>Dynamic requests (PUT and DELETE) to Amazon S3
+>
+>OAI doesn't work for the scenarios in the preceding list, or it requires extra workarounds in those scenarios. The following topics describe how to use OAC with an Amazon S3 origin. For information about how to migrate from OAI to OAC, see Migrating from origin access identity (OAI) to origin access control (OAC).
+
+[AWS Cloudfront Article on Origin Access Control](https://aws.amazon.com/blogs/networking-and-content-delivery/amazon-cloudfront-introduces-origin-access-control-oac/)
+
+[Terraform Origin Access Control Resource](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_origin_access_control)
+
+[AWS OAC Walkthrough](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html)
+
+### Terraform Locals Values
+
+[Terraform Locals Values](https://developer.hashicorp.com/terraform/language/values/locals)
+
+Locals allows us to define local variables. This can be used to consume data that needs to be transformed into another format and then referenced in somewhere else.
+
+**locals** not local
+
+eg:
+
+```tf
+locals {
+    s3_origin_id = "MyS3Origin"                       # Defined the Local Variable
+}
+
+resource "aws_cloudfront_distribution" "s3_distribution" {
+  origin {
+    domain_name              = 
+    origin_access_control_id = 
+    origin_id                = local.s3_origin_id     ## Consumed the local variable
+  }
+}
+```
+
+### AWS Bucket Policy
+
+[AWS Bucket Policy Terraform Resource](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_policy)
+
+[AWS Bucket Policy Documentation](https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html)
+
+Bucket Policies are used to secure access to your AWS S3 Buckets.
+
+### Terraform Data Sources
+
+[Terraform Data Sources](https://developer.hashicorp.com/terraform/language/data-sources)
+
+This allow us to source data from cloud resources. This is usefull when we want to reference cloud resources without importing them.
+
+eg:
+```tf
+resource "aws_s3_bucket_policy" "allow_access_from_another_account" {
+  bucket = aws_s3_bucket.example.id
+  policy = data.aws_iam_policy_document.allow_access_from_another_account.json      # data. calls the data block below
+}
+
+data "aws_iam_policy_document" "allow_access_from_another_account" {                # defines the cloud resource we want to reference above
+  statement {
+    principals {
+      type        = "AWS"
+      identifiers = ["123456789012"]
+    }
+
+    actions = [
+      "s3:GetObject",
+      "s3:ListBucket",
+    ]
+
+    resources = [
+      aws_s3_bucket.example.arn,
+      "${aws_s3_bucket.example.arn}/*",
+    ]
+  }
+}
+```
+
+
+### Working with JSON
+
+[Terraform JSON Encode](https://developer.hashicorp.com/terraform/language/functions/jsonencode)
+
+eg:
+```
+> jsonencode({"hello"="world"})
+{"hello":"world"}
+
+```
+
+[Terraform JSON Decode](https://developer.hashicorp.com/terraform/language/functions/jsondecode)
+
+eg:
+```
+> jsondecode("{\"hello\": \"world\"}")
+{
+  "hello" = "world"
+}
+> jsondecode("true")
+true
+```
