@@ -65,7 +65,14 @@ terraform plan -var user_uuid="12345678-1234-1234-1234-1234567890ab"
 
 #### Terraform var-file flag
 
-[Homework]
+[Terraform -var-file Flag](https://developer.hashicorp.com/terraform/language/values/variables#variable-definitions-tfvars-files)
+
+Instead of feeding a bunch of variables via the command line, it is much more convenient (and cleaner) to put the variables in a file that ends with `.tfvars` or `tfvars.json` and then feed that file on the command line. We can accomplish this with the `-var-file` flag when performing a terraform command.
+
+eg:
+```
+terraform apply -var-file="testing.tfvars"
+```
 
 #### Passing variables via the `terraform.tfvars` file
 Variables can also be supplied through the `terraform.tfvars` file. This method can also be used to override a pre-defined variable.
@@ -82,12 +89,37 @@ user_uuid="12345678-1234-1234-1234-1234567890ab"
 
 #### Terraform auto.tfvars
 
-[Homework: document this functionality for terraform cloud]
+[Terraform auto.tfvars File](https://developer.hashicorp.com/terraform/language/values/variables#variable-definitions-tfvars-files)
+
+>Terraform also automatically loads a number of variable definitions files if they are present:
+>
+>Files named exactly terraform.tfvars or terraform.tfvars.json.
+>Any files with names ending in .auto.tfvars or .auto.tfvars.json.
+>Files whose names end with .json are parsed instead as JSON objects, with the root object properties corresponding to variable names:
+>
+>```
+>{
+>  "image_id": "ami-abc123",
+>  "availability_zone_names": ["us-west-1a", "us-west-1c"]
+>}
+>
+>```
 
 
 ### Terraform variables order of operations
 
 [Homework: document the order of precendence for terraform variables]
+
+Terraform loads input variables in a specific order which also determines their precedence. The later a variable is loaded, the more preferred it is. 
+
+The order of loading is as follows:
+- Environment Variables
+- `terraform.tfvars` files
+- `terraform.tfvars.json` files
+- Any `*.auto.tfvars` or `*auto.tfvars.json` files
+  - These files are loaded in [lexical](https://en.wikipedia.org/wiki/Lexicographic_order) of their filenames.
+- Any `-var` or `-var-file` options from the command line.
+  - These are loaded in the order in which they are provided on the CLI
 
 #### Considerations for using variable with Terraform Cloud
 
@@ -98,6 +130,14 @@ You can set two different types of variables in Terraform cloud
 When using terraform cloud the variable will need to be created in the web portal. They do not carry over form the local instance and the tfvars file is not uploaded to the cloud tool automatically. **These need to be defined as Terraform variables instead of environment variables.**
 
 ![Terraform Cloud Variable](/journal/screenshots/tf-cloud-var-ss.png)
+
+#### Terraform Cloud auto.tfvars and other considerations
+
+[Terraform Cloud Variable COnsideration](https://developer.hashicorp.com/terraform/cloud-docs/workspaces/variables)
+
+Because Terraform Cloud is executing our terraform on another compute platform, there are considerations to be aware of when using TF Cloud for execution. The precened now includes variables that are defined in the project as well as the workspace with a lightly different precedence. I am not using TF Cloud but this is a good reference for the future in case we move back to executing on the Terraform Cloud platform.
+
+[Terraform Cloud Precedence - Note this is in reverse order from the Terraform Documentation](https://developer.hashicorp.com/terraform/cloud-docs/workspaces/variables#precedence)
 
 ### Terraform Regex Module
 
@@ -357,4 +397,34 @@ eg:
 }
 > jsondecode("true")
 true
+```
+
+## Terraform Lifecycle 
+
+[Terraform Lifecycle Documentation](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle)
+
+### Terraform Data
+
+[Terraform Data](https://developer.hashicorp.com/terraform/language/resources/terraform-data)
+
+In order to use local variables or plain data values to enact change on the `tf plan` we need a way to represent them as a resource that Terraform will see as changing. This resource also gives `lifecycle` something to look at to trigged a `replace_triggered_by` on a static resource like our `index.html`.
+
+eg:
+```tf
+resource "terraform_data" "content_version" {
+  input = var.content_version
+}
+
+resource "aws_s3_object" "index_html" {
+  bucket = aws_s3_bucket.website_bucket.bucket
+  key    = "index.html"
+  source = var.index_html_filepath
+  content_type = "text/html"
+
+  etag = filemd5(var.index_html_filepath)
+  lifecycle {
+    ignore_changes = [etag]
+    replace_triggered_by = [terraform_data.content_version.output]
+  }
+}
 ```
