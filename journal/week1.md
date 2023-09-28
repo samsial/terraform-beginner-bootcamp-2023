@@ -428,3 +428,71 @@ resource "aws_s3_object" "index_html" {
   }
 }
 ```
+
+## Terraform Invalidate Cache
+
+### Strings and Templates
+
+[Terraform Strings and Templates](https://developer.hashicorp.com/terraform/language/expressions/strings#heredoc-strings)
+
+#### Heredoc Strings
+
+heredoc allows a multi line command to be expressed for cleanliness and simplicity sake in programming langueages. Terraform supports heredoc expreesion of strings
+
+eg:
+```tf
+<<EOT
+hello
+world
+EOT
+```
+
+### Provisioners
+
+[Terraform Providers](https://developer.hashicorp.com/terraform/language/resources/provisioners/syntax)
+
+Provisioners allow you to execute commands on acompute instances. 
+
+Hasicorp does not reccomed their use because configuration management tools (ansible) are a better fit, however, they do exists
+
+#### Local Exec
+
+This will execute commands on the machine that is running the terraform commands eg `terraform plan`
+
+example:
+```tf
+resource "aws_instance" "web" {
+  # ...
+
+  provisioner "local-exec" {
+    command = "echo The server's IP address is ${self.private_ip}"
+  }
+}
+```
+
+#### Remote Exec
+
+This will execute commands on a machine which you target. Remote-exec require you to provide credentials for that machine.
+
+Example:
+```tf
+resource "aws_instance" "web" {
+  # ...
+
+  # Establishes connection to be used by all
+  # generic remote provisioners (i.e. file/remote-exec)
+  connection {
+    type     = "ssh"
+    user     = "root"
+    password = var.root_password
+    host     = self.public_ip
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "puppet apply",
+      "consul join ${aws_instance.web.private_ip}",
+    ]
+  }
+}
+```
