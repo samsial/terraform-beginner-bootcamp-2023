@@ -1,5 +1,7 @@
 # **Terraform Beginner Bootcamp 2023**
 
+![architecture for this project](./journal/screenshots/architecture.png)
+
 ## **Weekly Journals**
 
 - [Week 0 Journal](/journal/week0.md)
