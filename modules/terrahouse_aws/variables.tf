@@ -47,3 +47,13 @@ variable "content_version" {
     error_message = "Content version must be a positive integer starting at 1."
   }
 }
+
+variable "assets_directory" {
+  description = "The directory for our HTML assets"
+  type        = string
+
+  validation {
+    condition     = can(fileexists("${var.assets_directory}/*"))
+    error_message = "The specified assets directory does not exist."
+  }
+}

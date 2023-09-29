@@ -496,3 +496,51 @@ resource "aws_instance" "web" {
   }
 }
 ```
+
+
+## For Each Expressions
+
+[Terraform `for_each`](https://developer.hashicorp.com/terraform/language/meta-arguments/for_each)
+
+Terraform allows us to iterate over complex data structures using the `for_each` expression in our Terraform Code. This is useful when you want to make multiple of the same resource by allowing us to reuse the same code without having to repeat it for every asset.
+
+### Fileset Function
+
+[Terrraform Fileset Function Documentation](https://developer.hashicorp.com/terraform/language/functions/fileset)
+
+#### Terraform Complex Types
+
+[Terraform Complex Type](https://developer.hashicorp.com/terraform/language/expressions/type-constraints#complex-types)
+
+Complex types are Terraforms way of grouping data into a single value. Think Python lists or dictionaries. There are two categories of complex types types that each interact slightly differently when running for_each.
+
+- Collection Types (Groups Similar Values)
+  - List, Map, Set
+    - List and Set will only have a key
+      eg:
+      ```
+        resource "aws_iam_user" "the-accounts" {
+          for_each = toset( ["Todd", "James", "Alice", "Dottie"] )
+          name     = each.key
+        }
+      ```
+
+    - Map will have key:value pair
+      eg:
+      ```
+      resource "azurerm_resource_group" "rg" {
+        for_each = {
+          a_group = "eastus"
+          another_group = "westus2"
+        }
+        name     = each.key
+        location = each.value
+      }
+      ```
+- Structural Types (Groups Potentially Dissimilar Values)
+  - Tuple, Object
+
+#### Terrform Collection Types
+
+[Terraform Collection Types](https://developer.hashicorp.com/terraform/language/expressions/type-constraints#collection-types)
+
