@@ -556,11 +556,11 @@ I was able to identify the issue by lookging at my S3 bucket and finding the who
 I then went to the terraform documenaton for `aws_s3_object` and found that the key is what sets the name/path once it is in the S3 bucket. 
 
 eg **BAD CODE**:
-```tf
+```diff
 resource "aws_s3_object" "upload_assets" {
   for_each = fileset(var.assets_directory,"*.{jpg,png,gif}")
   bucket = aws_s3_bucket.website_bucket.bucket
-  key    = "${var.assets_destination}/${each.key}"                <==== Bad
+  - key    = "${var.assets_destination}/${each.key}"
   source = "${var.assets_directory}/${each.key}"
 
   etag = filemd5("${var.assets_directory}/${each.key}")
@@ -573,11 +573,11 @@ resource "aws_s3_object" "upload_assets" {
 
 eg replaced with **GOOD CODE**:
 
-```tf
+```diff
 resource "aws_s3_object" "upload_assets" {
   for_each = fileset(var.assets_directory,"*.{jpg,png,gif}")
   bucket = aws_s3_bucket.website_bucket.bucket
-  key    = "assets/${each.key}"                              <==== Good
+  + key    = "assets/${each.key}"
   source = "${var.assets_directory}/${each.key}"
 
   etag = filemd5("${var.assets_directory}/${each.key}")
