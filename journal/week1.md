@@ -544,3 +544,45 @@ Complex types are Terraforms way of grouping data into a single value. Think Pyt
 
 [Terraform Collection Types](https://developer.hashicorp.com/terraform/language/expressions/type-constraints#collection-types)
 
+
+## AWS S3 Object Key
+
+I ran into an issue where I used my entire `var.assets_destination` in the key field of my S3 Object. This caused my assets to upload with the entire path of the gitpod workspace into my S3 bucket which made my HTML not refence the correct location in my S3 bucket. 
+
+I was able to identify the issue by lookging at my S3 bucket and finding the whole `workspace/terraform-begginner-bootcamp-2023/public/assets/*some_JPG*` file structure. 
+
+I then went to the terraform documenaton for `aws_s3_object` and found that the key is what sets the name/path once it is in the S3 bucket. 
+
+eg **BAD CODE**:
+```tf
+resource "aws_s3_object" "upload_assets" {
+  for_each = fileset(var.assets_directory,"*.{jpg,png,gif}")
+  bucket = aws_s3_bucket.website_bucket.bucket
+  key    = "${var.assets_destination}/${each.key}"                <==== Bad
+  source = "${var.assets_directory}/${each.key}"
+
+  etag = filemd5("${var.assets_directory}/${each.key}")
+  lifecycle {
+    ignore_changes = [etag]
+    replace_triggered_by = [terraform_data.content_version.output]
+  }
+}
+```
+
+eg replaced with **GOOD CODE**:
+
+```tf
+resource "aws_s3_object" "upload_assets" {
+  for_each = fileset(var.assets_directory,"*.{jpg,png,gif}")
+  bucket = aws_s3_bucket.website_bucket.bucket
+  key    = "assets/${each.key}"                              <==== Good
+  source = "${var.assets_directory}/${each.key}"
+
+  etag = filemd5("${var.assets_directory}/${each.key}")
+  lifecycle {
+    ignore_changes = [etag]
+    replace_triggered_by = [terraform_data.content_version.output]
+  }
+}
+```
+
