@@ -547,6 +547,8 @@ Complex types are Terraforms way of grouping data into a single value. Think Pyt
 
 ## AWS S3 Object Key
 
+[Terraform asw_s3_object](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_object)
+
 I ran into an issue where I used my entire `var.assets_destination` in the key field of my S3 Object. This caused my assets to upload with the entire path of the gitpod workspace into my S3 bucket which made my HTML not refence the correct location in my S3 bucket. 
 
 I was able to identify the issue by lookging at my S3 bucket and finding the whole `workspace/terraform-begginner-bootcamp-2023/public/assets/*some_JPG*` file structure. 
