@@ -73,3 +73,15 @@ Anytime the server.rb references the params() function, it is specifically talki
 ### Bearer Authentication
 
 [Bearer](https://swagger.io/docs/specification/authentication/bearer-authentication/)
+
+## Creating a custom Terraform Provider
+
+[Terraform Provider Documentation](https://developer.hashicorp.com/terraform/tutorials/providers)
+
+This above link goes to a repo of documentation that will help us when writing custom terraform providers. There are several ways to write providers, choose the documentation that best fits your need.
+
+### Terraformrc
+
+This file allows us to use our custom provider and allow terraform to find it when it define it in the hcl. Since our provider wont be hosted on the official terraform registry, this file is required to load our local custom provider. 
+
+We get this into the `/home/gitpod/.terraform.d/plugins/local.providers/local/` with the build_provider bash script in `/bin`.
