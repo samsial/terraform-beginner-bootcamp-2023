@@ -32,3 +32,6 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+#Ignore the golan binary for our terraform custom provider
+terraform-provider-terratowns/terraform-provider-terratowns_v*
