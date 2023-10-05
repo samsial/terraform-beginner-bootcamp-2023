@@ -1,5 +1,8 @@
 tasks:
   - name: terraform
+    env:
+      #set an env var in the terraform cli terminal that will output debug level logs when we use TF commands
+      TF_LOG: DEBUG
     before: |
       cd $PROJECT_ROOT
       source ./bin/install_terraform_cli
