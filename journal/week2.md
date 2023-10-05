@@ -85,3 +85,12 @@ This above link goes to a repo of documentation that will help us when writing c
 This file allows us to use our custom provider and allow terraform to find it when it define it in the hcl. Since our provider wont be hosted on the official terraform registry, this file is required to load our local custom provider. 
 
 We get this into the `/home/gitpod/.terraform.d/plugins/local.providers/local/` with the build_provider bash script in `/bin`.
+
+## TF LOG
+
+We can get more output for debugging when running Terraform commands by changing the log level. 
+
+eg
+```sh
+TF_LOG=DEBUG tf init
+```
