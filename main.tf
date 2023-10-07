@@ -18,7 +18,7 @@ terraform {
 #eg: endpoint, user_uuid, token
 #these are hardcoded mock values for the local mock web server. When we do this for real it will use our uuid and token from ExamPro
 provider "terratowns" {
-  endpoint = "http://localhost:4567"
+  endpoint = "http://localhost:4567/api"
   user_uuid="e328f4ab-b99f-421c-84c9-4ccea042c7d1" 
   token="9b49b3fb-b8e9-483c-b703-97ba88eef8e0"
 }
@@ -32,3 +32,14 @@ provider "terratowns" {
 #  content_version = var.content_version
 #  assets_directory = var.assets_directory
 #}
+
+resource "terratowns_home" "home1" {
+  name = "test with a change"
+  description = <<DESCRIPTION
+I am not very creative but wanted to follow along so I came up with this long description for no reason.
+DESCRIPTION
+  town = "cooker-cove"
+  content_version = 1
+  domain_name = "test4231act.cloudfront.net"
+  #domain_name = module.terrahouse_aws.cloudfront_url
+}
