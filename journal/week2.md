@@ -86,7 +86,7 @@ This file allows us to use our custom provider and allow terraform to find it wh
 
 We get this into the `/home/gitpod/.terraform.d/plugins/local.providers/local/` with the build_provider bash script in `/bin`.
 
-## TF LOG
+### TF LOG
 
 We can get more output for debugging when running Terraform commands by changing the log level. 
 
@@ -94,3 +94,13 @@ eg
 ```sh
 TF_LOG=DEBUG tf init
 ```
+
+### CRUD
+
+Terraform Provider resources use CRUD. CRUD stands for:
+    - Create
+    - Read
+    - Update
+    - Delete
+
+[CRUD from Wikipedia](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete)
