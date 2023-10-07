@@ -8,15 +8,15 @@ variable "user_uuid" {
     }
 }
 
-variable "bucket_name" {
-  type        = string
-  description = "Name of the AWS S3 bucket"
-
-  validation {
-    condition     = can(regex("^([a-zA-Z0-9.-]{3,63})$", var.bucket_name))
-    error_message = "Invalid AWS S3 bucket name. It must be between 3 and 63 characters long and only contain alphanumeric characters, hyphens, or periods."
-  }
-}
+#variable "bucket_name" {
+#  type        = string
+#  description = "Name of the AWS S3 bucket"
+#
+#  validation {
+#    condition     = can(regex("^([a-zA-Z0-9.-]{3,63})$", var.bucket_name))
+#    error_message = "Invalid AWS S3 bucket name. It must be between 3 and 63 characters long and only contain alphanumeric characters, hyphens, or periods."
+#  }
+#}
 
 variable "index_html_filepath" {
   description = "The file path for index.html"

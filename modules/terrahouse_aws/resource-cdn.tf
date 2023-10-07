@@ -5,8 +5,8 @@ locals {
 }
 
 resource "aws_cloudfront_origin_access_control" "default" {
-  name                              = "OAC ${var.bucket_name}"
-  description                       = "Origin Access Control for Static Website Hosting ${var.bucket_name}"
+  name                              = "OAC ${aws_s3_bucket.website_bucket.bucket}"
+  description                       = "Origin Access Control for Static Website Hosting ${aws_s3_bucket.website_bucket.bucket}"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
@@ -21,7 +21,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 
   enabled             = true
   is_ipv6_enabled     = true
-  comment             = "Static Website Hosting for ${var.bucket_name}"
+  comment             = "Static Website Hosting for ${aws_s3_bucket.website_bucket.bucket}"
   default_root_object = "index.html"
  
   #aliases = ["mysite.example.com", "yoursite.example.com"]
