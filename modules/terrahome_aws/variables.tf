@@ -18,24 +18,9 @@ variable "user_uuid" {
 #  }
 #}
 
-variable "index_html_filepath" {
-  description = "The file path for index.html"
+variable "public_path" {
+  description = "The file path for the public directory"
   type        = string
-
-  validation {
-    condition     = fileexists(var.index_html_filepath)
-    error_message = "The provided path for index.html does not exist."
-  }
-}
-
-variable "error_html_filepath" {
-  description = "The file path for error.html"
-  type        = string
-
-  validation {
-    condition     = fileexists(var.error_html_filepath)
-    error_message = "The provided path for error.html does not exist."
-  }
 }
 
 variable "content_version" {
@@ -45,15 +30,5 @@ variable "content_version" {
   validation {
     condition     = var.content_version >= 1 && ceil(var.content_version) == floor(var.content_version)
     error_message = "Content version must be a positive integer starting at 1."
-  }
-}
-
-variable "assets_directory" {
-  description = "The directory for our HTML assets"
-  type        = string
-
-  validation {
-    condition     = can(fileexists("${var.assets_directory}/*"))
-    error_message = "The specified assets directory does not exist."
   }
 }

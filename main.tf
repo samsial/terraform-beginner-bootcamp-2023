@@ -23,13 +23,11 @@ provider "terratowns" {
   token = var.terratowns_access_token
 }
 
-module "terrahouse_aws" {
-  source = "./modules/terrahouse_aws"
+module "home_home1" {
+  source = "./modules/terrahome_aws"
   user_uuid = var.teacherseat_user_uuid
-  index_html_filepath = var.index_html_filepath
-  error_html_filepath = var.error_html_filepath
-  content_version = var.content_version
-  assets_directory = var.assets_directory
+  public_path = var.home1.public_path
+  content_version = var.home1.content_version
 }
 
 resource "terratowns_home" "home1" {
@@ -38,7 +36,25 @@ resource "terratowns_home" "home1" {
 Just a few pictures of some Indian Motorcycles!
 DESCRIPTION
   town = "missingo"
-  content_version = 1
+  content_version = var.home1.content_version
   #domain_name = "test4231act.cloudfront.net"
-  domain_name = module.terrahouse_aws.cloudfront_url
+  domain_name = module.home_home1.domain_name
+}
+
+
+module "home_frenchonionsoup" {
+  source = "./modules/terrahome_aws"
+  user_uuid = var.teacherseat_user_uuid
+  public_path = var.frenchonionsoup.public_path
+  content_version = var.frenchonionsoup.content_version
+}
+
+resource "terratowns_home" "frenchonionsoup" {
+  name = "French Onion Soup"
+  description = <<DESCRIPTION
+This is my favorite French Onion Soup recipe.
+DESCRIPTION
+  town = "cooker-cove"
+  content_version = var.frenchonionsoup.content_version
+  domain_name = module.home_frenchonionsoup.domain_name
 }

@@ -104,3 +104,46 @@ Terraform Provider resources use CRUD. CRUD stands for:
     - Delete
 
 [CRUD from Wikipedia](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete)
+
+## Multi Home Refactor
+
+We had to alter how our path to our static web content is given to the modules so that we could have more than one home.
+
+### Steps to add a new home
+
+- Add you home to the `terraform.tfvars.example` and the `terraform.tfvars` making sure to change the block for your new content
+    ```tf
+    YOURHOME = {
+      public_path = "/workspace/terraform-beginner-bootcamp-2023/public/YOURHOMEDIRECTORY"
+      content_version = 1 
+    }
+    ```
+- Add you new module to `main.tf` making sure to change the block for your new content
+    ```
+    module "home_YOURHOME" {
+      source = "./modules/terrahome_aws"
+      user_uuid = var.teacherseat_user_uuid
+      public_path = var.YOURHOME.public_path
+      content_version = var.YOURHOME.content_version
+    }
+    ```
+- Add your new resource to `main.tf` making sure to change the block for your new content
+    ```
+    resource "terratowns_home" "YOURHOME" {
+      name = "French Onion Soup"
+      description = <<DESCRIPTION
+    YOURDESCRIPTION
+    DESCRIPTION
+      town = "TOWN"
+      content_version = var.YOURHOME.content_version
+      domain_name = module.YOURNEWMODULE.domain_name
+    }
+    ```
+- Create a new directory under `./public` with your home name
+    - Must include `index.html`
+    - Must include `error.html`
+    - Must include `/assets/`
+        - **Only the top level of this directory will be uploaded. Sub-directories will be ignored**
+- `tf init`
+- `tf plan`
+- `tf apply --auto-approve`
